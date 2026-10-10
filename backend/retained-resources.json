@@ -1,0 +1,193 @@
+{
+  "UploadBucket": {
+    "Type": "AWS::S3::Bucket",
+    "Properties": {
+      "PublicAccessBlockConfiguration": {
+        "BlockPublicAcls": true,
+        "BlockPublicPolicy": true,
+        "IgnorePublicAcls": true,
+        "RestrictPublicBuckets": true
+      },
+      "OwnershipControls": {
+        "Rules": [
+          {
+            "ObjectOwnership": "BucketOwnerEnforced"
+          }
+        ]
+      },
+      "BucketEncryption": {
+        "ServerSideEncryptionConfiguration": [
+          {
+            "ServerSideEncryptionByDefault": {
+              "SSEAlgorithm": "AES256"
+            }
+          }
+        ]
+      },
+      "LifecycleConfiguration": {
+        "Rules": [
+          {
+            "Id": "ExpireTemporaryAudio",
+            "Status": "Enabled",
+            "Prefix": "inputs/",
+            "ExpirationInDays": 1,
+            "AbortIncompleteMultipartUpload": {
+              "DaysAfterInitiation": 1
+            }
+          },
+          {
+            "Id": "ExpireTranscripts",
+            "Status": "Enabled",
+            "Prefix": "transcripts/",
+            "ExpirationInDays": 1
+          },
+          {
+            "Id": "ExpireCaptions",
+            "Status": "Enabled",
+            "Prefix": "captions/",
+            "ExpirationInDays": 1
+          }
+        ]
+      }
+    },
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Metadata": {
+      "com.aws.cloudformation.Context": {
+        "why": "Preserve existing private data after removal of the caption feature. The local extension does not connect to this resource.",
+        "must": [
+          "Do not replace or delete retained customer data.",
+          "Keep privacy and encryption settings. No public access or new processing."
+        ]
+      }
+    }
+  },
+  "BucketPolicy": {
+    "Type": "AWS::S3::BucketPolicy",
+    "Properties": {
+      "Bucket": {
+        "Ref": "UploadBucket"
+      },
+      "PolicyDocument": {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Deny",
+            "Principal": "*",
+            "Action": "s3:*",
+            "Resource": [
+              {
+                "Fn::GetAtt": [
+                  "UploadBucket",
+                  "Arn"
+                ]
+              },
+              {
+                "Fn::Sub": "${UploadBucket.Arn}/*"
+              }
+            ],
+            "Condition": {
+              "Bool": {
+                "aws:SecureTransport": false
+              }
+            }
+          }
+        ]
+      }
+    },
+    "Metadata": {
+      "com.aws.cloudformation.Context": {
+        "why": "Preserve existing private data after removal of the caption feature. The local extension does not connect to this resource.",
+        "must": [
+          "Do not replace or delete retained customer data.",
+          "Keep privacy and encryption settings. No public access or new processing."
+        ]
+      }
+    }
+  },
+  "JobsTable": {
+    "Type": "AWS::DynamoDB::Table",
+    "Properties": {
+      "BillingMode": "PAY_PER_REQUEST",
+      "AttributeDefinitions": [
+        {
+          "AttributeName": "jobId",
+          "AttributeType": "S"
+        }
+      ],
+      "KeySchema": [
+        {
+          "AttributeName": "jobId",
+          "KeyType": "HASH"
+        }
+      ],
+      "TimeToLiveSpecification": {
+        "AttributeName": "expiresAt",
+        "Enabled": true
+      },
+      "SSESpecification": {
+        "SSEEnabled": true
+      }
+    },
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Metadata": {
+      "com.aws.cloudformation.Context": {
+        "why": "Preserve existing private data after removal of the caption feature. The local extension does not connect to this resource.",
+        "must": [
+          "Do not replace or delete retained customer data.",
+          "Keep privacy and encryption settings. No public access or new processing."
+        ]
+      }
+    }
+  },
+  "UserPool": {
+    "Type": "AWS::Cognito::UserPool",
+    "Properties": {
+      "UserPoolName": {
+        "Fn::Sub": "${AWS::StackName}-users"
+      },
+      "UserPoolTier": "LITE",
+      "AdminCreateUserConfig": {
+        "AllowAdminCreateUserOnly": true
+      },
+      "UsernameAttributes": [
+        "email"
+      ],
+      "AutoVerifiedAttributes": [
+        "email"
+      ],
+      "UsernameConfiguration": {
+        "CaseSensitive": false
+      },
+      "Policies": {
+        "PasswordPolicy": {
+          "MinimumLength": 12,
+          "RequireLowercase": true,
+          "RequireUppercase": true,
+          "RequireNumbers": true,
+          "RequireSymbols": true
+        }
+      },
+      "AccountRecoverySetting": {
+        "RecoveryMechanisms": [
+          {
+            "Name": "verified_email",
+            "Priority": 1
+          }
+        ]
+      }
+    },
+    "DeletionPolicy": "Retain",
+    "UpdateReplacePolicy": "Retain",
+    "Metadata": {
+      "com.aws.cloudformation.Context": {
+        "why": "Preserve existing private data after removal of the caption feature. The local extension does not connect to this resource.",
+        "must": [
+          "Do not replace or delete retained customer data.",
+          "Keep privacy and encryption settings. No public access or new processing."
+        ]
+      }
+    }
+  }
+}
