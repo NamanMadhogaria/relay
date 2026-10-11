@@ -4,6 +4,7 @@ import type { Recording } from './storage';
 export type Page =
   | 'studio'
   | 'library'
+  | 'cloud'
   | 'home'
   | 'meetings'
   | 'playlists'
@@ -17,6 +18,7 @@ export type Page =
 export const pageNames: Record<Page, string> = {
   studio: 'Recording studio',
   library: 'Library',
+  cloud: 'Cloud backups',
   home: 'For you',
   meetings: 'Meetings',
   playlists: 'Playlists',

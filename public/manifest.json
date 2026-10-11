@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Relay - Screen Recorder",
-  "description": "Record your screen, camera, and microphone. Organize videos, playlists, meetings, and workspace insights locally.",
-  "version": "0.3.0",
+  "description": "Record screen, camera, and microphone. Organize locally and optionally back up recordings to private AWS storage.",
+  "version": "0.4.0",
   "minimum_chrome_version": "116",
   "action": {
     "default_title": "Open Relay recording studio",
@@ -15,12 +15,16 @@
     "service_worker": "background.js"
   },
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'none'; connect-src 'none'"
+    "extension_pages": "script-src 'self'; object-src 'none'; connect-src 'self' https://cognito-identity.ap-south-1.amazonaws.com https://relay-cloud-recordingsbucket-jzlkl1tjyyjg.s3.ap-south-1.amazonaws.com"
   },
   "icons": {
     "16": "icons/relay-16.png",
     "32": "icons/relay-32.png",
     "48": "icons/relay-48.png",
     "128": "icons/relay-128.png"
-  }
+  },
+  "host_permissions": [
+    "https://cognito-identity.ap-south-1.amazonaws.com/*",
+    "https://relay-cloud-recordingsbucket-jzlkl1tjyyjg.s3.ap-south-1.amazonaws.com/*"
+  ]
 }

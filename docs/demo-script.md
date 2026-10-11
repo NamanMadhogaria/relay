@@ -22,7 +22,7 @@ The assignment was to build a product similar to Loom, with a simple user experi
 
 Relay can record a screen, a window, or a browser tab. You can also add your voice and camera.
 
-This version works locally. You do not need to create an account to use it.
+Recording works locally. You can also back up videos to AWS without creating a Relay account.
 
 ## 2. Record a video
 
@@ -56,7 +56,7 @@ Here is the recorded video. The camera is part of the saved video, so it also ap
 
 I can give the video a clear name and download a copy. The download uses the WebM video format.
 
-The video is also saved in this browser's local storage. It is not uploaded to a server.
+The video is also saved in this browser's local storage. It uploads to AWS only when I choose Back up on the Cloud backups page.
 
 [Click New recording.]
 
@@ -110,7 +110,21 @@ All these management pages are open to anyone using this installation. There is 
 
 Relay Tools shows storage information and lets me export workspace details. This export contains information like names and organization. It does not contain the actual videos, so I download important videos separately.
 
-## 7. How it works
+## 7. AWS cloud backup
+
+[Open Cloud backups. Click Connect to AWS, then Back up beside the demo recording. Wait until upload finishes.]
+
+This is the AWS integration. Amazon S3 stores a separate copy of my video in Mumbai. I choose which videos to upload.
+
+Amazon Cognito gives this installation temporary access. The app does not contain my AWS password or permanent access keys. AWS permissions limit each guest to their own folder.
+
+[Show the video under In AWS. Show Restore to Library.]
+
+Restore to Library downloads the cloud video and saves it on this device. Deleting a cloud copy does not delete the local video.
+
+There is no Relay login. I must keep this Chrome profile and extension data to keep access to this cloud space. It is not a shared team account or automatic recovery on a new device.
+
+## 8. How it works
 
 [Open the README or keep Relay visible.]
 
@@ -124,7 +138,7 @@ The finished video goes into IndexedDB. This is a database inside the browser. S
 
 The recording runs in a full browser tab. This means closing the small extension launcher does not end the recording.
 
-## 8. AI use, challenges, and testing
+## 9. AI use, challenges, and testing
 
 I used AI tools during development to help write code, improve the structure, create tests, and prepare documentation.
 
@@ -136,15 +150,15 @@ Another challenge was handling permissions and stopping capture safely. For exam
 
 I also explored AWS for AI captions. The upload flow worked in the prototype, but the account rejected the transcription and translation requests. Captions were later removed from the scope.
 
-So this release has no AI caption feature, and it does not use AWS while recording. The AI contribution in this version is the development workflow.
+This release uses AWS for video backup and restore. It does not generate captions. The AI contribution is the development workflow.
 
-The project passed 44 frontend tests and two infrastructure retention tests. The production build also passed. Browser checks used test media. Real camera and microphone checks are listed separately in the testing document.
+The project passed 52 frontend tests and six backend tests. The production build also passed. Browser checks used test media. Real camera and microphone checks are listed separately in the testing document.
 
-## 9. Scale, limits, and closing
+## 10. Scale, limits, and closing
 
 I separated the interface, recording logic, camera processing, and storage into different parts. This makes the code easier to maintain and extend.
 
-The current product is a local application. It is not yet a shared cloud service.
+The current product has local recording and working AWS backup. It is not a shared team workspace. I tested real uploads, restored video bytes, and checked that a guest cannot access another guest's files.
 
 There is no fixed recording time limit, but long recordings still depend on available memory and storage.
 
@@ -164,17 +178,17 @@ My focus is a simple local recording flow, with no sign-in and clear privacy. I 
 
 I used AI in the development and testing workflow, and I documented how I checked the results. I also explored AI captions. The final version does not include a working AI feature for users, so that part of the product objective is still a gap.
 
-**Why is there an AWS folder if the app is local?**
+**What does AWS do in this project?**
 
-It contains maintenance information for the earlier cloud prototype and retained data. The current extension does not call AWS. I would check the deployment status separately before claiming every old resource has been removed.
+Amazon S3 stores selected video backups. Amazon Cognito provides temporary guest credentials. IAM controls each guest's access. CloudFormation creates the infrastructure. The earlier caption service is separate and is not used.
 
 **Where are my videos?**
 
-They are in IndexedDB in the Chrome profile where Relay is installed. Downloaded copies are normal files on the computer. Clearing browser data can remove the local library.
+They are in IndexedDB in the Chrome profile where Relay is installed. Downloaded copies are normal files on the computer. Selected backups also live in S3. Clearing browser data can remove the local library and the guest identifier needed for in-app cloud access.
 
 **Can many people use it?**
 
-People can install it and use their own local workspaces. They do not share one online workspace. A team version would need accounts, access controls, cloud storage, and more testing.
+People can install it and use their own local workspaces. They do not share one online workspace. Each installation also has its own AWS backup space. A team version would need accounts, collaboration permissions, abuse controls, and more testing.
 
 **What would you improve first?**
 
@@ -186,4 +200,4 @@ Describe only the checks you personally completed. For example, after actually c
 
 ## If you have only five minutes
 
-Keep the recording and preview demonstration. Show Library, one playlist, dark mode, and Insights. Briefly mention the other pages instead of clicking each one. Finish with the AI workflow, one technical challenge, the local-only scope, and the deliverables.
+Keep the recording and preview demonstration. Show Library, one playlist, dark mode, and Insights. Briefly mention the other pages instead of clicking each one. Finish with the AI workflow, one technical challenge, the local-recording and optional-cloud scope, and the deliverables.

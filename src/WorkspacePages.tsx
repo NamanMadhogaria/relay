@@ -789,16 +789,17 @@ function Tools({ workspace, recordings }: Pick<Props, 'workspace' | 'recordings'
   return (
     <>
       <div className="workspace-panel">
-        <h2>Local by design</h2>
+        <h2>Local recording, optional cloud backups</h2>
         <p>
-          Relay records, previews, and saves videos directly in this Chrome profile. No account, AWS
-          connection, or subscription is needed to use the recorder and workspace tools.
+          Relay records, previews, and saves videos directly in this Chrome profile. Cloud backups
+          connects to AWS when you choose to back up or restore videos. No Relay sign-in is needed.
         </p>
         <ol className="architecture-list">
           <li>Choose a screen, window, or browser tab.</li>
           <li>Add microphone audio and a camera overlay if you want.</li>
           <li>Save and organize the video in your browser library.</li>
           <li>Download the WebM file to share it yourself.</li>
+          <li>Use Cloud backups to keep an optional copy in private AWS storage.</li>
         </ol>
         <p className="muted">
           Workspace tools are open to everyone using this installation. Data is not shared between
@@ -843,7 +844,7 @@ function Tools({ workspace, recordings }: Pick<Props, 'workspace' | 'recordings'
       </div>
       <div className="workspace-panel">
         <h2>About Relay</h2>
-        <p>Version 0.3.0 · Screen, camera, and microphone recorder</p>
+        <p>Version 0.4.0 · Screen, camera, and microphone recorder with AWS backups</p>
         <p>
           Local recording has no fixed time cap. Very long recordings depend on available memory and
           disk space. Download important videos to keep a separate copy.

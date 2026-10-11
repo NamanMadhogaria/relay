@@ -1,6 +1,6 @@
-# Relay 0.3.0
+# Relay 0.4.0
 
-A Chrome extension for recording a screen, camera, and microphone, with a local workspace for organizing and reviewing videos. No sign-in, roles, billing page, or cloud connection is required.
+A Chrome extension for recording a screen, camera, and microphone, with a local workspace and optional AWS recording backups. No Relay sign-in, admin roles, or billing page is required. Recording works offline; cloud backup and restore require internet access.
 
 ## Run the supplied extension
 
@@ -31,6 +31,7 @@ npm test
 | Recording studio | Screen/window/tab selection, optional microphone, camera composition, floating camera controls, countdown, pause/resume, preview, rename, download |
 | For you | Favorite videos and recently created recordings |
 | Library | Title/tag/folder search, sorting, folder filtering, favorites, playback, downloads, confirmed deletion |
+| Cloud backups | Explicit upload to private Amazon S3 storage, list cloud copies, restore to Library, delete cloud copies independently |
 | Meetings | Create/edit/delete agendas, date/time, link a saved video, export a 30-minute calendar event |
 | Playlists | Create, rename, delete, add/remove and reorder videos, open videos |
 | Recent | Recently recorded or recently played videos |
@@ -45,7 +46,11 @@ All management pages are available to everyone using the same installation. Each
 
 ## Data and privacy
 
-Videos live in IndexedDB (`relay-recordings`). Workspace metadata and theme are stored locally. The extension has no cloud host permissions, no account credentials, and blocks network connections through its extension CSP. Camera and microphone are requested only through browser permission prompts.
+Videos first save in IndexedDB (`relay-recordings`). Workspace metadata and theme remain local. Cloud backups uploads only videos you select, including their title, duration, and capture details. It does not upload folders, tags, playlists, or meeting agendas. Camera and microphone use browser permission prompts.
+
+AWS is integrated using an S3 bucket in Mumbai and Cognito guest identities. Temporary credentials stay in memory; no permanent AWS keys are included. The manifest permits connections only to the configured Cognito and S3 endpoints. Each guest can access only its own object prefix through IAM. See [backend/README.md](backend/README.md) for deployment, security, costs, and the AWS Console links.
+
+To try it: reload the extension, open **Cloud backups**, click **Connect to AWS**, then **Back up** beside a recording. **Restore to Library** downloads and saves the cloud copy. Cloud and local deletion are independent. Keep the same Chrome profile and extension storage: deleting guest identity data can lose in-app access to backups. This is not account recovery or team sharing.
 
 Download important recordings. Clearing browser storage or removing the Chrome profile can remove the local library. Workspace metadata export does not include video files and is not a restorable full backup.
 
@@ -54,16 +59,21 @@ Playback metrics count once per preview session, not unique viewers or external 
 ## Release scope
 
 - Captions, translations, automatic audio uploads and sign-in were removed at the owner's request.
-- AWS is not part of the runtime. The `backend` directory documents retirement of earlier cloud processing and retention of existing private data.
+- AWS powers optional recording backups. Captions remain removed. The separate old caption stack retains private data and is not used by the extension.
+- Cloud transfers support up to 1 GB per video. This is an application limit, not an enforced AWS spending cap. Storage, requests, and transfers can consume AWS credits. Previous object versions expire after seven days; incomplete multipart uploads expire after one day.
 - No hard recording duration limit. Chunks accumulate in memory, so available RAM and browser storage constrain long recordings; crash recovery and multi-hour endurance are not guaranteed.
 - Audio is microphone audio. System/tab audio, cloud sharing links, trimming, public viewer analytics, and cross-device sync are not implemented.
 - A floating camera window may be included in an entire-screen capture in addition to the embedded overlay. Hide the floating window if needed; the composed camera remains in the recording.
 
 See [SUBMISSION.md](SUBMISSION.md) for the approach, [docs/demo-script.md](docs/demo-script.md) for a spoken demo in simple English, and [docs/testing.md](docs/testing.md) for verification and remaining hardware checks.
 
+The consolidated [reasoning PDF](docs/Relay-Reasoning-and-Approach.pdf) includes the working AWS backup architecture and submission approach.
+
 ## Screenshots
 
 Synthetic demonstration recordings are shown; new installations start with an empty library.
+
+![AWS recording backups](docs/screenshots/cloud-backups.png)
 
 ![For you](docs/screenshots/for-you.png)
 

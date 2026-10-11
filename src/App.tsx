@@ -1,6 +1,7 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   ArrowDownToLine,
+  Cloud,
   Home,
   CalendarDays,
   ListVideo,
@@ -50,6 +51,8 @@ import CameraPreview from './CameraPreview';
 import { applyTheme, readTheme } from './theme';
 import { formatTime } from './recorder';
 import { deleteRecording, listRecordings, Recording, saveRecording } from './storage';
+
+const CloudBackups = lazy(() => import('./CloudBackups'));
 
 export default function App() {
   const [theme, setTheme] = useState(readTheme);
@@ -260,6 +263,7 @@ export default function App() {
   const navItems = [
     ['home', Home],
     ['library', Film],
+    ['cloud', Cloud],
     ['meetings', CalendarDays],
     ['playlists', ListVideo],
     ['recent', Clock3],
@@ -326,9 +330,7 @@ export default function App() {
           </button>
           {navItems.map(navItem)}
         </nav>
-        <div className="nav-label admin-label">
-          Admin tools
-        </div>
+        <div className="nav-label admin-label">Admin tools</div>
         <nav aria-label="Admin tools">{adminItems.map(navItem)}</nav>
         <div className="sidebar-bottom">
           <button className="primary sidebar-record" disabled={busy} onClick={newRecording}>
@@ -341,7 +343,7 @@ export default function App() {
             </span>
             <div>
               {workspace.data.displayName}
-              <small>Relay · v0.3.0</small>
+              <small>Relay · v0.4.0</small>
             </div>
           </div>
         </div>
@@ -395,7 +397,24 @@ export default function App() {
               {workspace.error}
             </p>
           )}
-          {view !== 'studio' && view !== 'library' ? (
+          {view === 'cloud' ? (
+            <Suspense fallback={<p role="status">Loading cloud backups…</p>}>
+              <CloudBackups
+                recordings={recordings}
+                onRestore={(recording) => {
+                  setRecordings((items) =>
+                    [recording, ...items.filter((r) => r.id !== recording.id)].sort(
+                      (a, b) => b.createdAt - a.createdAt,
+                    ),
+                  );
+                  if (selected?.id === recording.id) {
+                    setSelected(recording);
+                    setTitle(recording.title);
+                  }
+                }}
+              />
+            </Suspense>
+          ) : view !== 'studio' && view !== 'library' ? (
             <WorkspacePages
               key={view}
               page={view}

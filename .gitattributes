@@ -1,5 +1,6 @@
 * text=auto eol=lf
 *.png binary
+*.pdf binary
 *.zip binary
 # Preserve upstream security rules, including their original whitespace.
 backend/security/rules/*.guard -whitespace
