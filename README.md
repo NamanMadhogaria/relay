@@ -59,7 +59,7 @@ Playback metrics count once per preview session, not unique viewers or external 
 - Audio is microphone audio. System/tab audio, cloud sharing links, trimming, public viewer analytics, and cross-device sync are not implemented.
 - A floating camera window may be included in an entire-screen capture in addition to the embedded overlay. Hide the floating window if needed; the composed camera remains in the recording.
 
-See [SUBMISSION.md](SUBMISSION.md) for the approach and demo script, and [docs/testing.md](docs/testing.md) for verification and remaining hardware checks.
+See [SUBMISSION.md](SUBMISSION.md) for the approach, [docs/demo-script.md](docs/demo-script.md) for a spoken demo in simple English, and [docs/testing.md](docs/testing.md) for verification and remaining hardware checks.
 
 ## Screenshots
 

@@ -28,6 +28,8 @@ An AWS transcription prototype was investigated and tested. Although private upl
 
 ## Suggested five-minute demo
 
+For a complete spoken walkthrough in simple English, see [the demo script](docs/demo-script.md). It includes presentation actions and short answers to likely interview questions.
+
 1. Open Recording studio. Enable the microphone and camera, choose a tab, and record a short explanation.
 2. Pause, resume, finish, rename, preview, and download the video.
 3. Open Library, favorite the clip, then find it in For you.
